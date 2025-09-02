@@ -1,72 +1,61 @@
-import { User, AuthSession } from '../types/auth';
-
 const STORAGE_KEYS = {
-  USERS: 'qauth_users',
-  SESSIONS: 'qauth_sessions',
-  CURRENT_USER: 'qauth_current_user'
-};
+  USER: 'qauth_user',
+  TOKEN: 'qauth_token',
+  QR_REQUESTS: 'qauth_qr_requests',
+} as const;
 
-export const saveUser = (user: User): void => {
-  const users = getUsers();
-  const existingIndex = users.findIndex(u => u.id === user.id);
-  
-  if (existingIndex >= 0) {
-    users[existingIndex] = user;
-  } else {
-    users.push(user);
-  }
-  
-  localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
-};
+export const storage = {
+  getUser: (): any => {
+    try {
+      const user = localStorage.getItem(STORAGE_KEYS.USER);
+      return user ? JSON.parse(user) : null;
+    } catch {
+      return null;
+    }
+  },
 
-export const getUsers = (): User[] => {
-  const stored = localStorage.getItem(STORAGE_KEYS.USERS);
-  return stored ? JSON.parse(stored) : [];
-};
+  setUser: (user: any): void => {
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+  },
 
-export const getUserByEmail = (email: string): User | null => {
-  const users = getUsers();
-  return users.find(user => user.email === email) || null;
-};
+  removeUser: (): void => {
+    localStorage.removeItem(STORAGE_KEYS.USER);
+    localStorage.removeItem(STORAGE_KEYS.TOKEN);
+  },
 
-export const saveSession = (session: AuthSession): void => {
-  const sessions = getSessions();
-  const existingIndex = sessions.findIndex(s => s.id === session.id);
-  
-  if (existingIndex >= 0) {
-    sessions[existingIndex] = session;
-  } else {
-    sessions.push(session);
-  }
-  
-  localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(sessions));
-};
+  getToken: (): string | null => {
+    return localStorage.getItem(STORAGE_KEYS.TOKEN);
+  },
 
-export const getSessions = (): AuthSession[] => {
-  const stored = localStorage.getItem(STORAGE_KEYS.SESSIONS);
-  return stored ? JSON.parse(stored) : [];
-};
+  setToken: (token: string): void => {
+    localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+  },
 
-export const getSessionById = (sessionId: string): AuthSession | null => {
-  const sessions = getSessions();
-  return sessions.find(session => session.id === sessionId) || null;
-};
+  getQRRequests: (): any[] => {
+    try {
+      const requests = localStorage.getItem(STORAGE_KEYS.QR_REQUESTS);
+      return requests ? JSON.parse(requests) : [];
+    } catch {
+      return [];
+    }
+  },
 
-export const setCurrentUser = (user: User | null): void => {
-  if (user) {
-    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
-  } else {
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-  }
-};
+  setQRRequests: (requests: any[]): void => {
+    localStorage.setItem(STORAGE_KEYS.QR_REQUESTS, JSON.stringify(requests));
+  },
 
-export const getCurrentUser = (): User | null => {
-  const stored = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
-  return stored ? JSON.parse(stored) : null;
-};
+  addQRRequest: (request: any): void => {
+    const requests = storage.getQRRequests();
+    requests.push(request);
+    storage.setQRRequests(requests);
+  },
 
-export const clearExpiredSessions = (): void => {
-  const sessions = getSessions();
-  const validSessions = sessions.filter(session => Date.now() < session.expiresAt);
-  localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(validSessions));
+  updateQRRequest: (requestId: string, updates: Partial<any>): void => {
+    const requests = storage.getQRRequests();
+    const index = requests.findIndex(req => req.id === requestId);
+    if (index !== -1) {
+      requests[index] = { ...requests[index], ...updates };
+      storage.setQRRequests(requests);
+    }
+  },
 };

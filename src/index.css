@@ -11,6 +11,14 @@
     @apply bg-gray-50 text-gray-900;
     line-height: 1.6;
   }
+  
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.2;
+  }
+  
+  p {
+    line-height: 1.5;
+  }
 }
 
 @layer components {
@@ -19,18 +27,22 @@
   }
   
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm hover:shadow-md;
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
   }
   
   .btn-secondary {
     @apply btn bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
   }
   
+  .btn-success {
+    @apply btn bg-success-600 text-white hover:bg-success-700 focus:ring-success-500;
+  }
+  
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200;
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
   }
   
   .input {
-    @apply block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 transition-colors duration-200;
+    @apply block w-full rounded-lg border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500;
   }
 }
