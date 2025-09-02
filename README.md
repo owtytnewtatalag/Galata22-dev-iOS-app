@@ -1,0 +1,1 @@
+# Galata22-dev-iOS-app
